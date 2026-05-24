@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Qovio is a modular digital systems framework for structured thinking, UI architecture, and precision-driven design." />
+  <title>Qovio | Modular System Grid Interface</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #0a0a0a;
+      --muted: #4b5563;
+      --line: #e5e7eb;
+      --line-strong: #cbd5e1;
+      --grid: #f3f4f6;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --surface: #fafafa;
+      --radius: 18px;
+      --shadow: 0 1px 0 rgba(10, 10, 10, 0.04);
+      --max: 1200px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(to right, transparent 0, transparent calc(100% - 1px), var(--grid) calc(100% - 1px)),
+        linear-gradient(to bottom, transparent 0, transparent calc(100% - 1px), var(--grid) calc(100% - 1px)),
+        var(--bg);
+      background-size: 72px 72px;
+      line-height: 1.5;
+      text-rendering: optimizeLegibility;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img, svg {
+      display: block;
+      max-width: 100%;
+    }
+
+    .page {
+      position: relative;
+      overflow: clip;
+    }
+
+    .page::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.58), rgba(255,255,255,0));
+      z-index: 0;
+    }
+
+    .container {
+      width: min(calc(100% - 32px), var(--max));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section {
+      padding: 80px 0;
+      animation: fade-up 700ms ease both;
+    }
+
+    .section + .section {
+      border-top: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 28px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    h1, h2, h3, h4 {
+      margin: 0;
+      font-family: "IBM Plex Sans", "Inter", system-ui, sans-serif;
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+    }
+
+    h1 {
+      font-size: clamp(3.25rem, 8vw, 6.5rem);
+      max-width: 10ch;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      max-width: 14ch;
+    }
+
+    h3 {
+      font-size: 1.125rem;
+      letter-spacing: -0.03em;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(6px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      background: var(--surface);
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: var(--accent);
+    }
+
+    .brand small {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-top: 3px;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .nav a {
+      padding: 8px 0;
+      border-bottom: 1px solid transparent;
+      transition: color 180ms ease, border-color 180ms ease;
+    }
+
+    .nav a:hover {
+      color: var(--text);
+      border-color: var(--line-strong);
+    }
+
+    .hero {
+      padding-top: 36px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .hero-copy {
+      display: grid;
+      gap: 22px;
+      padding: 24px 0;
+    }
+
+    .hero-copy p {
+      max-width: 58ch;
+      font-size: 1.05rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease;
+    }
+
+    .button.primary {
+      background: var(--text);
+      border-color: var(--text);
+      color: #fff;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+    }
+
+    .system-panel {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .panel-head span:last-child {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .module-block {
+      min-height: 94px;
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
+    }
+
+    .module-block:hover {
+      border-color: var(--accent);
+      background: #f8fbff;
+      transform: translateY(-1px);
+    }
+
+    .module-block strong {
+      font-size: 0.92rem;
+      letter-spacing: -0.02em;
+    }
+
+    .module-block span {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .schema {
+      display: grid;
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .schema-row {
+      display: grid;
+      grid-template-columns: 180px 1fr 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .schema-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+    }
+
+    .schema-track {
+      height: 1px;
+      background: var(--line-strong);
+      position: relative;
+      grid-column: 2 / span 2;
+    }
+
+    .schema-track::after {
+      content: "";
+      position: absolute;
+      top: -5px;
+      left: 28%;
+      width: 10px;
+      height: 10px;
+      border: 1px solid var(--accent);
+      background: #fff;
+    }
+
+    .module-section-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 30px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 20px;
+      display: grid;
+      gap: 14px;
+      min-height: 160px;
+      transition: border-color 180ms ease, transform 180ms ease;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .card .meta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+    }
+
+    .table-preview {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      overflow: hidden;
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 1.15fr 0.8fr 1fr;
+      gap: 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .table-row:last-child {
+      border-bottom: 0;
+    }
+
+    .table-row div {
+      padding: 16px 18px;
+      font-size: 0.95rem;
+    }
+
+    .table-row.header div {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      background: #fff;
+      font-weight: 700;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 30px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 20px;
+      display: grid;
+      gap: 8px;
+      min-height: 132px;
+    }
+
+    .stat strong {
+      font-family: "IBM Plex Sans", "Inter", system-ui, sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1;
+      letter-spacing: -0.06em;
+    }
+
+    .stat span {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+    }
+
+    .doc-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 18px;
+      margin-top: 30px;
+    }
+
+    .doc-block {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 24px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .doc-block ol {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      display: grid;
+      gap: 10px;
+    }
+
+    .doc-block li strong {
+      color: var(--text);
+    }
+
+    .cta {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: #fcfcfc;
+    }
+
+    .cta-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .cta-copy {
+      display: grid;
+      gap: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      color: var(--text);
+      padding: 14px 15px;
+      font: inherit;
+      border-radius: 0;
+      transition: border-color 180ms ease;
+    }
+
+    .field textarea {
+      min-height: 132px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .footer {
+      padding: 28px 0 36px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      border-top: 1px solid var(--line);
+      padding-top: 22px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .footer-links a:hover {
+      color: var(--text);
+    }
+
+    .version {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .split {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .kicker {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+    }
+
+    .subline {
+      max-width: 62ch;
+      font-size: 1rem;
+    }
+
+    @keyframes fade-up {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .hero-grid,
+      .cta-grid,
+      .doc-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .module-section-grid,
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .schema-row {
+        grid-template-columns: 140px 1fr;
+      }
+
+      .schema-track {
+        grid-column: 2;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .section {
+        padding: 58px 0;
+      }
+
+      .topbar,
+      .footer-grid {
+        grid-template-columns: 1fr;
+        display: grid;
+      }
+
+      .nav,
+      .footer-links {
+        justify-content: flex-start;
+      }
+
+      h1 {
+        max-width: 12ch;
+      }
+
+      .module-grid,
+      .module-section-grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .schema-row {
+        grid-template-columns: 1fr;
+      }
+
+      .schema-track {
+        grid-column: 1;
+      }
+
+      .table-row {
+        grid-template-columns: 1fr;
+      }
+
+      .table-row.header {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="container" style="display:flex; align-items:center; justify-content:space-between; gap:18px;">
+        <a class="brand" href="#top" aria-label="Qovio home">
+          <span class="brand-mark">Q</span>
+          <span>
+            Qovio
+            <small>Modular System Grid Interface</small>
+          </span>
+        </a>
+        <nav class="nav" aria-label="Primary">
+          <a href="#modules">Modules</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#library">Library</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="section hero">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <div class="eyebrow">System Introduction</div>
+            <h1>A System for Structured Digital Thinking</h1>
+            <p>Qovio is a modular framework for building digital architectures with precision. It organizes design logic, interface patterns, and scalable UI systems into a controlled environment that reads like documentation and behaves like infrastructure.</p>
+            <div class="actions">
+              <a class="button primary" href="#modules">Explore System</a>
+              <a class="button" href="#library">View Components</a>
+            </div>
+          </div>
+
+          <div class="system-panel" aria-label="System visualization">
+            <div class="panel-head">
+              <span>Interface Map</span>
+              <span>Active</span>
+            </div>
+            <div class="module-grid">
+              <div class="module-block"><strong>Grid</strong><span>structure</span></div>
+              <div class="module-block"><strong>Tokens</strong><span>ruleset</span></div>
+              <div class="module-block"><strong>Inputs</strong><span>controls</span></div>
+              <div class="module-block"><strong>Cards</strong><span>modules</span></div>
+              <div class="module-block"><strong>Flow</strong><span>logic</span></div>
+              <div class="module-block"><strong>Output</strong><span>interface</span></div>
+            </div>
+            <div class="schema" aria-hidden="true">
+              <div class="schema-row"><div class="schema-label">Layer 01</div><div class="schema-track"></div></div>
+              <div class="schema-row"><div class="schema-label">Layer 02</div><div class="schema-track"></div></div>
+              <div class="schema-row"><div class="schema-label">Layer 03</div><div class="schema-track"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="modules" class="section">
+        <div class="container">
+          <div class="split">
+            <div>
+              <div class="eyebrow">Core Modules</div>
+              <h2>Library primitives arranged as system blocks</h2>
+            </div>
+            <p class="subline">Each module behaves like a documented building unit: discrete, traceable, and ready to combine into larger interface systems without visual noise.</p>
+          </div>
+          <div class="module-section-grid">
+            <article class="card"><div class="meta"><span>01</span><span>layout engine</span></div><h3>Layout Engine</h3><p>Controls page structure, alignment rules, and responsive distribution across the interface.</p></article>
+            <article class="card"><div class="meta"><span>02</span><span>type system</span></div><h3>Typography System</h3><p>Defines hierarchy, density, and label behavior for technical communication.</p></article>
+            <article class="card"><div class="meta"><span>03</span><span>grid logic</span></div><h3>Grid Framework</h3><p>Sets column structure, rhythm, and the spacing matrix that keeps every block disciplined.</p></article>
+            <article class="card"><div class="meta"><span>04</span><span>ui parts</span></div><h3>Component Library</h3><p>Offers repeatable interface pieces built for consistency across systems and products.</p></article>
+            <article class="card"><div class="meta"><span>05</span><span>behavior</span></div><h3>Interaction Patterns</h3><p>Specifies hover states, focus rules, and operational feedback with minimal motion.</p></article>
+            <article class="card"><div class="meta"><span>06</span><span>standards</span></div><h3>Design Tokens</h3><p>Stores color, spacing, and radius values as the base language of the system.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section id="architecture" class="section">
+        <div class="container">
+          <div class="split">
+            <div>
+              <div class="eyebrow">System Architecture</div>
+              <h2>Layered structure for digital construction</h2>
+            </div>
+            <p class="subline">Qovio reads like an architecture map: a stacked model with clear dependencies, visible flow, and a precise path from foundation to output.</p>
+          </div>
+          <div class="schema" aria-label="Architecture layers">
+            <div class="schema-row"><div class="schema-label">Foundation Layer</div><div class="schema-track"></div></div>
+            <div class="schema-row"><div class="schema-label">UI Components</div><div class="schema-track"></div></div>
+            <div class="schema-row"><div class="schema-label">Interaction Layer</div><div class="schema-track"></div></div>
+            <div class="schema-row"><div class="schema-label">Data Structure</div><div class="schema-track"></div></div>
+            <div class="schema-row"><div class="schema-label">Output Interface</div><div class="schema-track"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="library" class="section">
+        <div class="container">
+          <div class="split">
+            <div>
+              <div class="eyebrow">Component Library</div>
+              <h2>Documentation-style reference surfaces</h2>
+            </div>
+            <p class="subline">The showcase below behaves like a practical UI catalogue: compact, labeled, and built to communicate structure rather than decoration.</p>
+          </div>
+          <div class="doc-grid">
+            <div class="doc-block">
+              <h3>Reference Blocks</h3>
+              <div class="table-preview" aria-label="Component table preview">
+                <div class="table-row header"><div>Component</div><div>State</div><div>Usage</div></div>
+                <div class="table-row"><div>Buttons</div><div>Primary / Secondary</div><div>Calls to action</div></div>
+                <div class="table-row"><div>Cards</div><div>Static / Hoverable</div><div>Content grouping</div></div>
+                <div class="table-row"><div>Inputs</div><div>Focus / Error</div><div>Data entry</div></div>
+                <div class="table-row"><div>Navigation</div><div>Inline / Sticky</div><div>Wayfinding</div></div>
+                <div class="table-row"><div>Tables</div><div>Dense / Responsive</div><div>Structured data</div></div>
+              </div>
+            </div>
+            <div class="doc-block">
+              <h3>Component Notes</h3>
+              <ol>
+                <li><strong>Buttons:</strong> keep hierarchy explicit with a solid primary and a restrained secondary state.</li>
+                <li><strong>Cards:</strong> use strict borders and equal spacing to preserve system integrity.</li>
+                <li><strong>Inputs:</strong> label-first patterns reduce ambiguity and improve scan speed.</li>
+                <li><strong>Navigation:</strong> keep placement predictable so users map the system quickly.</li>
+                <li><strong>Tables:</strong> align data by column and avoid visual ornamentation.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="split">
+            <div>
+              <div class="eyebrow">System Metrics</div>
+              <h2>Measured for scale, consistency, and implementation</h2>
+            </div>
+            <p class="subline">These metrics are presented as structured outputs rather than marketing claims, reinforcing the sense of a reliable operating framework.</p>
+          </div>
+          <div class="stats-grid">
+            <div class="stat"><strong>120+</strong><span>UI Components</span></div>
+            <div class="stat"><strong>35</strong><span>System Modules</span></div>
+            <div class="stat"><strong>99.9%</strong><span>Consistency Rate</span></div>
+            <div class="stat"><strong>500+</strong><span>Implementations</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="split">
+            <div>
+              <div class="eyebrow">Usage Guidelines</div>
+              <h2>Instructions for building with the system</h2>
+            </div>
+            <p class="subline">The documentation tone stays direct and operational: use the system as a framework, integrate components with discipline, and preserve the grid at every layer.</p>
+          </div>
+          <div class="doc-grid">
+            <div class="doc-block">
+              <h3>How to Use</h3>
+              <ol>
+                <li>Start with the grid and define the structural spacing before adding interface parts.</li>
+                <li>Compose modules in discrete layers so each block has a single role.</li>
+                <li>Keep labels concise and information-dense for quick scanning.</li>
+              </ol>
+            </div>
+            <div class="doc-block">
+              <h3>Best Practices</h3>
+              <ol>
+                <li>Maintain border consistency and avoid decorative surface treatment.</li>
+                <li>Use white space as a control mechanism, not as a visual effect.</li>
+                <li>Reserve accent color for guidance, emphasis, and state change.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section cta">
+        <div class="container cta-grid">
+          <div class="cta-copy">
+            <div class="eyebrow">Build Access</div>
+            <h2>Start Building Structured Systems</h2>
+            <p>Use Qovio as the basis for modular interface design, clean information architecture, and disciplined digital construction.</p>
+            <div class="actions">
+              <a class="button primary" href="#contact">Get System Access</a>
+              <a class="button" href="#top">Download Framework</a>
+            </div>
+          </div>
+          <div class="system-panel">
+            <div class="panel-head">
+              <span>Deployment Mode</span>
+              <span>Ready</span>
+            </div>
+            <div class="module-grid" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+              <div class="module-block"><strong>Integrate</strong><span>step 01</span></div>
+              <div class="module-block"><strong>Configure</strong><span>step 02</span></div>
+              <div class="module-block"><strong>Validate</strong><span>step 03</span></div>
+              <div class="module-block"><strong>Ship</strong><span>step 04</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="section">
+        <div class="container">
+          <div class="split">
+            <div>
+              <div class="eyebrow">Contact</div>
+              <h2>Request access to the system</h2>
+            </div>
+            <p class="subline">The form is intentionally plain and label-first, matching the same restrained logic used across the rest of the interface.</p>
+          </div>
+          <div class="doc-grid">
+            <form class="doc-block form-grid">
+              <div class="field">
+                <label for="name">Name</label>
+                <input id="name" name="name" type="text" placeholder="Your name" />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="you@company.com" />
+              </div>
+              <div class="field">
+                <label for="use-case">System Use Case</label>
+                <select id="use-case" name="use-case">
+                  <option>Design system build</option>
+                  <option>Product architecture</option>
+                  <option>Interface framework</option>
+                  <option>Documentation structure</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" placeholder="Describe the system you want to build."></textarea>
+              </div>
+              <div class="actions">
+                <button class="button primary" type="submit">Submit Request</button>
+              </div>
+            </form>
+            <div class="doc-block">
+              <h3>System Notes</h3>
+              <p>Qovio is designed as a controlled interface language for teams that need repeatable structure, reliable composition, and a documentation-minded visual framework.</p>
+              <div class="version">Qovio.online / v1.0 / modular interface release</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div>
+          <div class="brand" style="margin-bottom: 8px;">
+            <span class="brand-mark">Q</span>
+            <span>
+              Qovio
+              <small>Structured digital systems</small>
+            </span>
+          </div>
+          <div class="version">Documentation interface / build 1.0 / qovio.online</div>
+        </div>
+        <div class="footer-links">
+          <a href="#modules">Modules</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#library">Library</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
